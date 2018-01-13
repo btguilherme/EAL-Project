@@ -12,7 +12,6 @@ import eal.methods.RDBS;
 import eal.methods.Rand;
 import eal.utils.ReadProperties;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import weka.core.Instances;
 import eal.utils.IO;

@@ -90,10 +90,6 @@ public class RDBS extends RDS{
             
             Map<Integer, Double> _sorted = MapUtil.sortByValue(instDistRel);
             
-            Instances aux = new Instances(amostrasDeFronteira);
-            aux.delete();
-            aux.add(raizes.instance(i));
-            
             Set<Integer> keys = _sorted.keySet();
             
             for (Integer key : keys) {

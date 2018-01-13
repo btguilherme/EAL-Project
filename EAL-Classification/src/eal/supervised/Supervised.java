@@ -52,4 +52,8 @@ public class Supervised implements ISupervised{
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
+    public Classifier getClassifier() {
+        return classifier;
+    }
+    
 }

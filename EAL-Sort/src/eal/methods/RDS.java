@@ -77,10 +77,6 @@ public class RDS extends AFC{
             
             Map<Integer, Double> _sorted = MapUtil.sortByValue(instDistRel);
             
-            Instances aux = new Instances(file);
-            aux.delete();
-            aux.add(raizes.instance(i));
-            
             Set<Integer> keys = _sorted.keySet();
             
             for (Integer key : keys) {

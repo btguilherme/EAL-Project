@@ -6,6 +6,7 @@
 package eal.supervised;
 
 import java.io.IOException;
+import weka.classifiers.Classifier;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
 
@@ -20,9 +21,11 @@ public class RF extends Supervised{
     }
 
     @Override
-    public void train() throws Exception {
+    public Classifier train() throws Exception {
         classifier = new RandomForest();
         classifier.buildClassifier(z2i);
+        
+        return classifier;
     }
 
     @Override
