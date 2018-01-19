@@ -11,7 +11,7 @@ arff-path=/media/guilherme/Arquivos/EAL-Projects/bases/ecoli_no_string_att_numbe
 num-splits=10
 pct=0.8
 
-sort=RDS
+sort=Clu
 #AFC Clu RDS RDBS Rand
 
 classifier=SVM

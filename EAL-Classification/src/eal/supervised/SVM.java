@@ -31,7 +31,7 @@ public class SVM extends Supervised{
     @Override
     public void saveAccuracy() throws IOException {
         
-        //System.out.println(acc);
+        System.out.println(acc);
 //        
 //        String savePath = System.getProperty("user.dir").
 //                    concat(File.separator).concat("results").
