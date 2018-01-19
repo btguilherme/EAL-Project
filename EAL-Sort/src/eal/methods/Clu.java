@@ -5,14 +5,9 @@
  */
 package eal.methods;
 
-import eal.utils.MapUtil;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import weka.core.Debug;
-import weka.core.EuclideanDistance;
 import weka.core.Instances;
 
 
@@ -26,14 +21,6 @@ public class Clu extends RDS{
             throws Exception {
         
         super(file, nClusters, fileName, method);
-    }
-
-    @Override
-    public void makeItHappen() throws Exception {
-        cluster();
-        raizes = roots(clusterer.getClusterCentroids());
-        sort(file);
-        save();
     }
 
     @Override
@@ -79,10 +66,5 @@ public class Clu extends RDS{
         
         return ret;
     }
-    
-    
-    
-
-    
     
 }

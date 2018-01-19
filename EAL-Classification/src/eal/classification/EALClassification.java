@@ -12,14 +12,11 @@ import eal.utils.ReadProperties;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
-import weka.filters.Filter;
-import weka.filters.unsupervised.instance.RemoveWithValues;
 
 /**
  *
@@ -77,43 +74,19 @@ public class EALClassification {
                 } else if(files[i].getName().startsWith(uuid) && files[i].getName().
                        contains("RDS") && files[i].getName().contains("_z2i_")){
                     
-                    //routineMltipleLists(files[i]);
-                    
-                    
-                    
-                    loadsFilesMultipleLists(uuid, files, basesSavePath);
-
-                    Instances z2i = new Instances(z2iMultiple[0]);
-                    z2i.delete();
-                    Instances z2ii = new Instances(z2iiMultiple[0]);
-                    z2ii.delete();
-                    
-                    for (int j = 0; j < z2iMultiple.length; j++) {
-                        z2i.add(z2iMultiple[j].instance(0));//raiz
-                    }
-                    
-                    makesClassification(z2i);
-
-                    int cont = 0;
-                    
-                    do {
-
-                        z2i = selectSamplesMultipleLists(z2i, z2iMultiple, 
-                                z2iMultiple[0].numClasses() * xNumClasses, 0);
-                        
-                        
-                        //z2ii = selectSamples(z2ii, _z2ii, _z2i.numClasses());
-
-                        System.out.println(cont+"  nsamples: "+z2i.numInstances());
-                        cont++;
-                        makesClassification(z2i);
-                        
-
-                    } while (!outOfSamples);
-                    
+                    routineMultipleLists(uuid, files);
                     
                 } else if(files[i].getName().startsWith(uuid) && files[i].getName().
                        contains("RDBS") && files[i].getName().contains("_z2i_")){
+                    
+                    routineMultipleLists(uuid, files);
+                    
+                } else if(files[i].getName().startsWith(uuid) && files[i].getName().
+                       contains("Clu") && files[i].getName().contains("_z2i_")){
+                    
+                    //No Clu, a seleção é aleatória
+                    //Modificar a rotina abaixo para este caso
+                    routineMultipleLists(uuid, files);
                     
                 }
             }   
@@ -122,83 +95,59 @@ public class EALClassification {
     
     private static Instances selectSamplesMultipleLists(Instances ret, 
             Instances[] files, int numSamples, int labOrUnlab) throws Exception {
-
-        outOfSamples = false;
         
-        System.out.print(ret.numInstances());
-        
-        boolean sufficient = false;
-        
-        int numSamplesRetBefore, numSamplesRetAfter, added = 0;
+        int added = 0, indexControl = 0, toRemove, loopsWithoutRemove = 0;
         
         do {
-            numSamplesRetBefore = ret.numInstances();
-            for (int i = 0; i < files.length; i++) {
-                
-                double rootValue = classificador.classifyInstance(files[i].
-                        firstInstance());
-                
-                int toRemove = 0;
-                for (int j = 1; j < files[i].numInstances(); j++) {                    
-
-                    double instValue = classificador.classifyInstance(files[i].
-                            instance(j));
-
-                    if((rootValue != instValue) || (j == files[i].
-                            numInstances() - 1)){
-                        
-                        ret.add(files[i].instance(j));
-                        toRemove = j;
-                        added++;
-                        break;
-                    }       
+            
+            double rootValue = classificador.classifyInstance(files[indexControl].
+                    firstInstance());
+            toRemove = 0;
+            
+            for (int i = 1; i < files[indexControl].numInstances(); i++) {
+                double instValue = classificador.classifyInstance(files[indexControl].
+                        instance(i));
+                if((rootValue != instValue) || (i == files[indexControl].
+                        numInstances() - 1)){
+                    ret.add(files[indexControl].instance(i));
+                    toRemove = i;
+                    added++;
+                    break;
+                }       
+            }              
+            if(toRemove != 0){
+                Instances aux = new Instances(files[indexControl]);
+                aux.delete();
+                for (int i = 0; i < files[indexControl].numInstances(); i++) {
+                    if(i == toRemove){/*do nothing*/}
+                    else
+                        aux.add(files[indexControl].instance(i));
                 }
-                
-                
-                fazer a parte de remover a amostra selecionada do conjunto
-                        
-                        
-                if(toRemove != 0){
-                    
-                    Instances aux = new Instances(files[i]);
-                    aux.delete();
-                    System.out.println(files[i].numInstances());
-                    for (int j = 0; j < files[i].numInstances(); j++) {
-                        if(j == toRemove){
-                            
-                        }else{
-                            aux.add(files[i].instance(j));
-                            System.out.println("a");
-                        }
-                    }
-                    
-                    files[i] = aux;
-                    System.out.println(files[i].numInstances());
-                    System.exit(0);
-                }
-                
-            }
-            
-            numSamplesRetAfter = ret.numInstances();
-            
-            
-            
-            if(numSamplesRetBefore == numSamplesRetAfter)
-                outOfSamples = true;
+                files[indexControl] = aux;
+                loopsWithoutRemove = 0;
+            } else
+                loopsWithoutRemove++;
             
             if(added == numSamples)
-                sufficient = true;
+                break;
             
-        } while (!outOfSamples || !sufficient);
+            if (loopsWithoutRemove == files.length + 1){
+                outOfSamples = true;
+                break;
+            }
+            
+            if(indexControl == files.length - 1)
+                indexControl = 0;
+            else
+                indexControl++;
+            
+        } while (true);
         
-        if(labOrUnlab == 0){
+        if(labOrUnlab == 0)
             z2iMultiple = files;
-        } else if(labOrUnlab == 1){
+        else if(labOrUnlab == 1)
             z2iiMultiple = files;
-        }
         
-        System.out.println(" >>> "+ret.numInstances());
-
         return ret;   
     }
 
@@ -263,7 +212,6 @@ public class EALClassification {
             z2iMultiple[indexes.get(i)] = z2iList.get(i);
             z2iiMultiple[indexes.get(i)] = z2iiList.get(i);
         }
-        
     }
 
     private static void loadsFiles(File file, String basesSavePath) 
@@ -291,7 +239,6 @@ public class EALClassification {
                     break;
             }
         }
-        
     }
 
     private static void routineSingleList(File file) throws Exception {
@@ -310,6 +257,30 @@ public class EALClassification {
             makesClassification(z2i);
 
         } while (!outOfSamples);
+    }
+
+    private static void routineMultipleLists(String uuid, File[] files) throws Exception {
+        
+        loadsFilesMultipleLists(uuid, files, basesSavePath);
+
+        Instances z2i = new Instances(z2iMultiple[0]);
+        z2i.delete();
+        Instances z2ii = new Instances(z2iiMultiple[0]);
+        z2ii.delete();
+
+        for (Instances z2iMultiple1 : z2iMultiple)
+            z2i.add(z2iMultiple1.instance(0)); //raizes
+
+        makesClassification(z2i);
+        
+        do {
+            z2i = selectSamplesMultipleLists(z2i, z2iMultiple, 
+                    z2iMultiple[0].numClasses() * xNumClasses, 0);
+            //z2ii = selectSamples(z2ii, _z2ii, _z2i.numClasses());
+
+            makesClassification(z2i);
+
+        } while (outOfSamples == false);
     }
     
 }

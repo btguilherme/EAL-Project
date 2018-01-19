@@ -21,11 +21,10 @@ public class RF extends Supervised{
     }
 
     @Override
-    public Classifier train() throws Exception {
+    public void train() throws Exception {
         classifier = new RandomForest();
         classifier.buildClassifier(z2i);
         
-        return classifier;
     }
 
     @Override
