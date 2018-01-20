@@ -1,0 +1,27 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package eal.supervised;
+
+import java.io.IOException;
+import weka.core.Instances;
+
+/**
+ *
+ * @author guilherme
+ */
+public class OPF extends Supervised{
+    
+    public OPF(Instances z2i, Instances z3) throws Exception {
+        super(z2i, z3);
+    }
+
+    @Override
+    public void train() throws Exception {
+        classifier = new weka.classifiers.opf.OPF();
+        classifier.buildClassifier(z2i);
+    }
+    
+}

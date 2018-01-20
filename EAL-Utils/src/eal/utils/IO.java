@@ -45,6 +45,15 @@ public class IO {
         writer.close();
     }
     
+    public static void saveConcat(String data, String path) throws IOException{
+        BufferedWriter writer = new BufferedWriter(
+                           new FileWriter(path, true));
+        writer.write(data);
+        writer.newLine();
+        writer.flush();
+        writer.close();
+    }
+    
     public static File[] getFiles(String ends, String basesSavePath) {
         File arffFiles = new File(basesSavePath);
         FileFilter filter = (File file) -> file.getName().endsWith(ends);
