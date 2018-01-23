@@ -34,7 +34,6 @@ public class Unsupervised implements IUnsupervised{
     public void makeItHappen() throws Exception {
         train();
         classify();
-        saveAccuracy();
     }
 
     @Override
@@ -47,11 +46,6 @@ public class Unsupervised implements IUnsupervised{
         CollectiveEvaluation eval = new CollectiveEvaluation(z2i);
         eval.evaluateModel(classifier, z3);
         acc = eval.pctCorrect();
-    }
-
-    @Override
-    public void saveAccuracy() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     public Classifier getClassifier() {

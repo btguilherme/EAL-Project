@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
 
@@ -42,7 +41,6 @@ public class EALSelectionClassification {
     private static String basesSavePath;
     private static Classifier classificador;
     private static String savePath;
-    private static String executionUUID;
     private static double acc;
     
 
@@ -51,8 +49,6 @@ public class EALSelectionClassification {
      * @throws java.io.IOException
      */
     public static void main(String[] args) throws IOException, Exception {
-        
-        executionUUID = UUID.randomUUID().toString();
         
         ReadProperties rp = new ReadProperties();
         classifiers = rp.getClassifiers();
@@ -80,7 +76,7 @@ public class EALSelectionClassification {
                             if(files[i].getName().startsWith(uuid) && files[i].
                                     getName().contains(methodSort) && files[i].
                                             getName().contains("_z2i_"))
-                                routineSingleList(files[i]);
+                                routineSingleList(files[i], methodSort);
                             break;
                         case "Clu":
                             if(files[i].getName().startsWith(uuid) && files[i].
@@ -103,12 +99,11 @@ public class EALSelectionClassification {
                             break;
                     }
                 }
-                System.out.println("");
             }
         }
     }
     
-    private static void routineSingleList(File file) throws Exception {
+    private static void routineSingleList(File file, String method) throws Exception {
         
         UniqueList ul = new UniqueList();
         
@@ -126,28 +121,23 @@ public class EALSelectionClassification {
         String save = System.getProperty("user.dir").concat(File.separator).
                     concat("results").concat(File.separator).concat("txt").
                     concat(File.separator).concat(file.getName().split("_z2")[0].
-                    concat("_acc.txt")).concat("_").concat(".txt");
-        
-        IO.saveConcat(file.getName().replace("_z2i_", "_"), save);
+                    concat("_").concat(method));
 
         int contIt = 0;
         do {
-            z2i = ul.selectSamplesUniqueList(z2i, z2iSingle,
-                    z2iSingle.numClasses() * xNumClasses);
             
             z2ii = ul.selectSamplesUniqueList(z2ii, z2iiSingle,
                     z2iiSingle.numClasses());
+            
+            z2i = ul.selectSamplesUniqueList(z2i, z2iSingle,
+                    z2iSingle.numClasses() * xNumClasses);
             
             IO.save(z2i, savePath + file.getName().split(".arff")[0].concat("_it_").
                     concat(String.valueOf(contIt)).concat(".arff"));
             IO.save(z2ii, savePath + file.getName().replace("z2i", "z2ii").split(".arff")[0].
                     concat("_it_").concat(String.valueOf(contIt)).concat(".arff"));
             
-            makesClassification(z2i, z2ii);
-            
-            IO.saveConcat(String.valueOf(acc), save);
-            
-            arrumar a parte de salvar as acuracias
+            makesClassification(z2i, z2ii, save);
             
             contIt++;
         
@@ -187,14 +177,19 @@ public class EALSelectionClassification {
         
         contIt++;
         
-        makesClassification(z2i, z2ii);
+        String save = System.getProperty("user.dir").concat(File.separator).
+                    concat("results").concat(File.separator).concat("txt").
+                    concat(File.separator).concat(ml.getFileName().split("_z2")[0].
+                    concat("_").concat(method));
+        
+        makesClassification(z2i, z2ii, save);
         
         do {
-            z2i = ml.selectSamplesMultipleLists(classificador, z2i, 
-                    z2iMultiple, z2iMultiple[0].numClasses() * xNumClasses, 0);
-            
             z2ii = ml.selectSamplesMultipleLists(classificador, z2ii, 
                     z2iiMultiple, z2iiMultiple[0].numClasses(), 1);
+            
+            z2i = ml.selectSamplesMultipleLists(classificador, z2i, 
+                    z2iMultiple, z2iMultiple[0].numClasses() * xNumClasses, 0);
             
             IO.save(z2i, savePath + ml.getFileName().split("lista_")[0].concat("it_").
                     concat(String.valueOf(contIt)).concat(".arff"));
@@ -203,7 +198,7 @@ public class EALSelectionClassification {
                     split("lista_")[0].concat("it_").concat(String.valueOf(contIt)).
                     concat(".arff"));
             
-            makesClassification(z2i, z2ii);
+            makesClassification(z2i, z2ii, save);
             
             contIt++;
             
@@ -226,13 +221,19 @@ public class EALSelectionClassification {
         Instances z2ii = new Instances(z2iiMultiple[0]);
         z2ii.delete();
         
+        String save = System.getProperty("user.dir").concat(File.separator).
+                    concat("results").concat(File.separator).concat("txt").
+                    concat(File.separator).concat(ml.getFileName().split("_z2")[0].
+                    concat("_").concat(method));
+        
         int contIt = 0;
         
         do {
-            z2i = ml.selectSamplesMultipleListsClu(z2i, z2iMultiple, 
-                    z2iMultiple[0].numClasses() * xNumClasses, 0);
             z2ii = ml.selectSamplesMultipleListsClu(z2ii, z2iiMultiple, 
                     z2iiMultiple[0].numClasses(), 1);
+            
+            z2i = ml.selectSamplesMultipleListsClu(z2i, z2iMultiple, 
+                    z2iMultiple[0].numClasses() * xNumClasses, 0);
             
             IO.save(z2i, savePath + ml.getFileName().split("lista_")[0].concat("it_").
                     concat(String.valueOf(contIt)).concat(".arff"));
@@ -241,13 +242,14 @@ public class EALSelectionClassification {
                     split("lista_")[0].concat("it_").concat(String.valueOf(contIt)).
                     concat(".arff"));
             
-            makesClassification(z2i, z2ii);
+            makesClassification(z2i, z2ii, save);
             
             contIt++;
         } while (!ml.isOutOfSamples());
     }
     
-    private static void makesClassification(Instances z2i, Instances z2ii) throws Exception {
+    private static void makesClassification(Instances z2i, Instances z2ii, 
+            String savePath) throws Exception {
         
         for (String classifier : classifiers) {
             switch (classifier) {
@@ -299,6 +301,8 @@ public class EALSelectionClassification {
                     acc = wopf.getAcc();
                     break;
             }
+            IO.saveConcat(String.valueOf(acc), savePath + "_acc_" + classifier 
+                    + ".txt");
         }
     }
 

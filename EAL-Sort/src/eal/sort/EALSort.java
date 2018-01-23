@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import weka.core.Instances;
 import eal.utils.IO;
+import eal.utils.Timer;
 
 /**
  *
@@ -57,11 +58,9 @@ public class EALSort {
         
         Instances file = IO.open(_file.getAbsolutePath());
         file.setClassIndex(file.numAttributes() - 1);
-        
-        
-        
+
         for (String method : sort) {
-            
+            Timer timer = new Timer();
             switch(method){
                 case "AFC":
                     new AFC(file, file.numClasses() * xNumClasses,
@@ -83,6 +82,9 @@ public class EALSort {
                     new Rand(file, _file.getName().split(".arff")[0], "Rand");
                     break;
             }
+            
+            agora falta salvar todos os tempos com a classe Timer
+            System.out.println("Para o método "+method+": "+timer);
         }
     }
     

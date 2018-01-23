@@ -16,6 +16,5 @@ public interface IUnsupervised {
     void makeItHappen() throws Exception;
     void train() throws Exception;
     void classify() throws Exception;
-    void saveAccuracy() throws IOException;
     
 }

@@ -15,7 +15,7 @@ import weka.core.Instances;
  */
 public class UniqueList {
 
-    private boolean outOfSamples;
+    private boolean outOfSamples = false;
     private Instances z2iSingle;
     private Instances z2iiSingle;
     private Instances z3;
@@ -23,7 +23,7 @@ public class UniqueList {
     public Instances selectSamplesUniqueList(Instances ret, Instances file, 
             int numSamples) {
 
-        outOfSamples = false;
+        //outOfSamples = false;
 
         if(numSamples > file.numInstances()){
             numSamples = file.numInstances();
