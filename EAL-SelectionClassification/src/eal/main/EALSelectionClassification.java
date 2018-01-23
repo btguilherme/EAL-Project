@@ -30,7 +30,8 @@ import weka.core.Instances;
  * @author guilherme
  */
 public class EALSelectionClassification {
-
+    
+    private static final String SEP = File.separator;
     private static String[] classifiers;
     private static int xNumClasses;
     private static Instances z2iSingle;
@@ -57,8 +58,8 @@ public class EALSelectionClassification {
         String splitsSortedPath = rp.getSplitsSorted();
         String methodsSort[] = rp.getSort();
         
-        savePath = System.getProperty("user.dir").concat(File.separator).
-                concat("results").concat(File.separator);
+        savePath = System.getProperty("user.dir").concat(SEP).
+                concat("arff-files-iterations").concat(SEP);
         
         File[] files = IO.getFiles(".arff", splitsSortedPath);
         Set<String> uuids = new HashSet<>();
@@ -118,12 +119,12 @@ public class EALSelectionClassification {
         Instances z2ii = new Instances(z2iiSingle);
         z2ii.delete();
         
-        String save = System.getProperty("user.dir").concat(File.separator).
-                    concat("results").concat(File.separator).concat("txt").
-                    concat(File.separator).concat(file.getName().split("_z2")[0].
-                    concat("_").concat(method));
+        String save = System.getProperty("user.dir").split("EAL-SelectionClassif"
+                + "ication")[0].concat("txt-files").concat(SEP).concat(file.
+                        getName().split("_z2")[0].concat("_").concat(method));
 
         int contIt = 0;
+        boolean firstIteration = true;
         do {
             
             z2ii = ul.selectSamplesUniqueList(z2ii, z2iiSingle,
@@ -137,7 +138,9 @@ public class EALSelectionClassification {
             IO.save(z2ii, savePath + file.getName().replace("z2i", "z2ii").split(".arff")[0].
                     concat("_it_").concat(String.valueOf(contIt)).concat(".arff"));
             
-            makesClassification(z2i, z2ii, save);
+            makesClassification(z2i, z2ii, save, firstIteration);
+            
+            firstIteration = false;
             
             contIt++;
         
@@ -177,12 +180,11 @@ public class EALSelectionClassification {
         
         contIt++;
         
-        String save = System.getProperty("user.dir").concat(File.separator).
-                    concat("results").concat(File.separator).concat("txt").
-                    concat(File.separator).concat(ml.getFileName().split("_z2")[0].
-                    concat("_").concat(method));
+        String save = System.getProperty("user.dir").split("EAL-SelectionClassif"
+                + "ication")[0].concat("txt-files").concat(SEP).concat(ml.
+                        getFileName().split("_z2")[0].concat("_").concat(method));
         
-        makesClassification(z2i, z2ii, save);
+        makesClassification(z2i, z2ii, save, true);
         
         do {
             z2ii = ml.selectSamplesMultipleLists(classificador, z2ii, 
@@ -198,7 +200,7 @@ public class EALSelectionClassification {
                     split("lista_")[0].concat("it_").concat(String.valueOf(contIt)).
                     concat(".arff"));
             
-            makesClassification(z2i, z2ii, save);
+            makesClassification(z2i, z2ii, save, false);
             
             contIt++;
             
@@ -221,12 +223,12 @@ public class EALSelectionClassification {
         Instances z2ii = new Instances(z2iiMultiple[0]);
         z2ii.delete();
         
-        String save = System.getProperty("user.dir").concat(File.separator).
-                    concat("results").concat(File.separator).concat("txt").
-                    concat(File.separator).concat(ml.getFileName().split("_z2")[0].
-                    concat("_").concat(method));
+        String save = System.getProperty("user.dir").split("EAL-SelectionClassif"
+                + "ication")[0].concat("txt-files").concat(SEP).concat(ml.
+                        getFileName().split("_z2")[0].concat("_").concat(method));
         
         int contIt = 0;
+        boolean firstIteration = true;
         
         do {
             z2ii = ml.selectSamplesMultipleListsClu(z2ii, z2iiMultiple, 
@@ -242,67 +244,76 @@ public class EALSelectionClassification {
                     split("lista_")[0].concat("it_").concat(String.valueOf(contIt)).
                     concat(".arff"));
             
-            makesClassification(z2i, z2ii, save);
+            makesClassification(z2i, z2ii, save, firstIteration);
+            
+            firstIteration = false;
             
             contIt++;
         } while (!ml.isOutOfSamples());
     }
     
     private static void makesClassification(Instances z2i, Instances z2ii, 
-            String savePath) throws Exception {
+            String savePath, boolean firstIteration) throws Exception {
         
         for (String classifier : classifiers) {
+            
+            System.err.print("Aplicando o classificador " + classifier + "... ");
+            
             switch (classifier) {
                 //supervised
                 case "SVM":
-                    SVM svm = new SVM(z2i, z3);
+                    SVM svm = new SVM(z2i, z3, savePath, firstIteration);
                     classificador = svm.getClassifier();
                     acc = svm.getAcc();
                     break;
                 case "RF":
-                    RF rf = new RF(z2i, z3);
+                    RF rf = new RF(z2i, z3, savePath, firstIteration);
                     classificador = rf.getClassifier();
                     acc = rf.getAcc();
                     break;
                 case "OPF":
-                    OPF opf = new OPF(z2i, z3);
+                    OPF opf = new OPF(z2i, z3, savePath, firstIteration);
                     classificador = opf.getClassifier();
                     acc = opf.getAcc();
                     break;
                 //semisupervised
                 case "YSVM":
-                    YATSISVM ysvm = new YATSISVM(z2i, z2ii, z3);
+                    YATSISVM ysvm = new YATSISVM(z2i, z2ii, z3, savePath, firstIteration);
                     classificador = ysvm.getClassifier();
                     acc = ysvm.getAcc();
                     break;
                 case "YRF":
-                    YATSIRF yrf = new YATSIRF(z2i, z2ii, z3);
+                    YATSIRF yrf = new YATSIRF(z2i, z2ii, z3, savePath, firstIteration);
                     classificador = yrf.getClassifier();
                     acc = yrf.getAcc();
                     break;
                 case "YOPF":
-                    YATSIOPF yopf = new YATSIOPF(z2i, z2ii, z3);
+                    YATSIOPF yopf = new YATSIOPF(z2i, z2ii, z3, savePath, firstIteration);
                     classificador = yopf.getClassifier();
                     acc = yopf.getAcc();
                     break;
                 case "WSVM":
-                    CollectiveWrapperSVM wsvm = new CollectiveWrapperSVM(z2i, z2ii, z3);
+                    CollectiveWrapperSVM wsvm = new CollectiveWrapperSVM(z2i, z2ii, z3, savePath, firstIteration);
                     classificador = wsvm.getClassifier();
                     acc = wsvm.getAcc();
                     break;
                 case "WRF":
-                    CollectiveWrapperRF wrf = new CollectiveWrapperRF(z2i, z2ii, z3);
+                    CollectiveWrapperRF wrf = new CollectiveWrapperRF(z2i, z2ii, z3, savePath, firstIteration);
                     classificador = wrf.getClassifier();
                     acc = wrf.getAcc();
                     break;
                 case "WOPF":
-                    CollectiveWrapperOPF wopf = new CollectiveWrapperOPF(z2i, z2ii, z3);
+                    CollectiveWrapperOPF wopf = new CollectiveWrapperOPF(z2i, z2ii, z3, savePath, firstIteration);
                     classificador = wopf.getClassifier();
                     acc = wopf.getAcc();
                     break;
             }
+            
+            System.err.println("Fim");
+            
             IO.saveConcat(String.valueOf(acc), savePath + "_acc_" + classifier 
                     + ".txt");
+            
         }
     }
 

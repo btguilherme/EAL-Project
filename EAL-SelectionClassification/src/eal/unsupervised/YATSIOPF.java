@@ -15,8 +15,10 @@ import weka.core.Instances;
  */
 public class YATSIOPF extends Unsupervised{
     
-    public YATSIOPF(Instances z2i, Instances z2ii, Instances z3) throws Exception {
-        super(z2i, z2ii, z3);
+    public YATSIOPF(Instances z2i, Instances z2ii, Instances z3, String savePath,
+            boolean firstIteration) throws Exception {
+        
+        super(z2i, z2ii, z3, savePath, firstIteration);
     }
 
     @Override

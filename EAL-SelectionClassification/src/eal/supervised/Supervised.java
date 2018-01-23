@@ -5,7 +5,9 @@
  */
 package eal.supervised;
 
-import java.io.IOException;
+import eal.utils.IO;
+import eal.utils.Timer;
+import java.util.UUID;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
@@ -20,18 +22,42 @@ public class Supervised implements ISupervised{
     protected final Instances z3;
     protected Classifier classifier;
     protected double acc;
+    protected final String savePath;
+    protected final boolean firstIteration;
 
-    public Supervised(Instances z2i, Instances z3) throws Exception {
+    public Supervised(Instances z2i, Instances z3, String savePath, 
+            boolean firstIteration) throws Exception {
+        
         this.z2i = z2i;
         this.z3 = z3;
+        this.savePath = savePath;
+        this.firstIteration = firstIteration;
         
         makeItHappen();
     }
     
     @Override
     public void makeItHappen() throws Exception{
+        Timer timer = new Timer();
         train();
+        String trainTime = timer.toString();
+        
+        timer = new Timer();
         classify();
+        String testTime = timer.toString();
+        
+        String classifierType = getClass().getSimpleName();
+        
+        if(firstIteration){
+            String uuid = String.valueOf(UUID.randomUUID());
+            IO.saveConcat("#" + uuid, savePath + "_acc_" + classifierType + ".txt");
+            IO.saveConcat("#" + uuid, savePath + "_train_" + classifierType + ".txt");
+            IO.saveConcat("#" + uuid, savePath + "_test_" + classifierType + ".txt");
+        }
+        
+        IO.saveConcat(String.valueOf(acc), savePath + "_acc_" + classifierType + ".txt");
+        IO.saveConcat(trainTime, savePath + "_train_" + classifierType + ".txt");
+        IO.saveConcat(testTime, savePath + "_test_" + classifierType + ".txt");
     }
     
     @Override

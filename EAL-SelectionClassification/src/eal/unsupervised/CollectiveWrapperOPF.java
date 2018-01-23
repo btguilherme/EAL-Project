@@ -15,10 +15,10 @@ import weka.core.Instances;
  */
 public class CollectiveWrapperOPF extends Unsupervised{
     
-    public CollectiveWrapperOPF(Instances z2i, Instances z2ii, Instances z3)
-            throws Exception {
+    public CollectiveWrapperOPF(Instances z2i, Instances z2ii, Instances z3, 
+            String savePath, boolean firstIteration) throws Exception {
         
-        super(z2i, z2ii, z3);
+        super(z2i, z2ii, z3, savePath, firstIteration);
     }
 
     @Override

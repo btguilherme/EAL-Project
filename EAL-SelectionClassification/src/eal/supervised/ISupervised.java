@@ -5,9 +5,6 @@
  */
 package eal.supervised;
 
-import java.io.IOException;
-
-
 /**
  *
  * @author guilherme

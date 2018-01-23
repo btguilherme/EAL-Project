@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import weka.core.Instances;
 import eal.utils.IO;
-import eal.utils.Timer;
 
 /**
  *
@@ -28,6 +27,7 @@ public class EALSort {
      */
     private static String[] sort;
     private static int xNumClasses;
+    private static final String SEP = File.separator;
     
     public static void main(String[] args) throws IOException, Exception {
         
@@ -60,31 +60,31 @@ public class EALSort {
         file.setClassIndex(file.numAttributes() - 1);
 
         for (String method : sort) {
-            Timer timer = new Timer();
+            
+            String save = System.getProperty("user.dir").split("EAL-Sort")[0].
+                concat("txt-files").concat(SEP).concat(_file.getName().split(".arff")[0].concat("_").concat(method));
+            
             switch(method){
                 case "AFC":
                     new AFC(file, file.numClasses() * xNumClasses,
-                            _file.getName().split(".arff")[0], "AFC");
+                            _file.getName().split(".arff")[0], method, save);
                     break;
                 case "Clu":
                     new Clu(file, file.numClasses() * xNumClasses,
-                            _file.getName().split(".arff")[0], "Clu");
+                            _file.getName().split(".arff")[0], method, save);
                     break;
                 case "RDBS":
                     new RDBS(file, file.numClasses() * xNumClasses,
-                            _file.getName().split(".arff")[0], "RDBS");
+                            _file.getName().split(".arff")[0], method, save);
                     break;
                 case "RDS":
                     new RDS(file, file.numClasses() * xNumClasses,
-                            _file.getName().split(".arff")[0], "RDS");
+                            _file.getName().split(".arff")[0], method, save);
                     break;
                 case "Rand":
-                    new Rand(file, _file.getName().split(".arff")[0], "Rand");
+                    new Rand(file, _file.getName().split(".arff")[0], method, save);
                     break;
             }
-            
-            agora falta salvar todos os tempos com a classe Timer
-            System.out.println("Para o método "+method+": "+timer);
         }
     }
     

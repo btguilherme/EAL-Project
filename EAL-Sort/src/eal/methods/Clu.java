@@ -17,10 +17,10 @@ import weka.core.Instances;
  */
 public class Clu extends RDS{
 
-    public Clu(Instances file, int nClusters, String fileName, String method)
-            throws Exception {
+    public Clu(Instances file, int nClusters, String fileName, String method, 
+            String savePath) throws Exception {
         
-        super(file, nClusters, fileName, method);
+        super(file, nClusters, fileName, method, savePath);
     }
 
     @Override

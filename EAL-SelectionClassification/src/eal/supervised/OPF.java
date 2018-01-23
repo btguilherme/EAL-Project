@@ -14,8 +14,10 @@ import weka.core.Instances;
  */
 public class OPF extends Supervised{
     
-    public OPF(Instances z2i, Instances z3) throws Exception {
-        super(z2i, z3);
+    public OPF(Instances z2i, Instances z3, String savePath, 
+            boolean firstIteration) throws Exception {
+        
+        super(z2i, z3, savePath, firstIteration);
     }
 
     @Override

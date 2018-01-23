@@ -6,8 +6,10 @@
 package eal.methods;
 
 import eal.utils.IO;
+import eal.utils.Timer;
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 import weka.core.Debug;
 import weka.core.Instances;
 
@@ -20,27 +22,38 @@ public class Rand {
     private final Instances file;
     private final String method;
     private final String fileName;
+    private final String savePath;
     
-    public Rand(Instances file, String fileName, String method) throws IOException{
+    public Rand(Instances file, String fileName, String method, String savePath) throws IOException{
         this.file = file;
         this.fileName = fileName;
         this.method = method;
+        this.savePath = savePath;
+        
         makeItHappen();
     }
     
     protected void makeItHappen() throws IOException{
+        Timer timer = new Timer();
+        
         file.randomize(new Debug.Random());
+        
+        String sortTime = timer.toString();
+        String uuid = String.valueOf(UUID.randomUUID());
+        IO.saveConcat("#" + uuid, savePath + "_sort_time_" + method + ".txt");
+        IO.saveConcat(sortTime, savePath + "_sort_time_" + method + ".txt");
+        
         save();
     }
 
     protected void save() throws IOException {
         
-        String savePath = System.getProperty("user.dir").
+        String saveArffPath = System.getProperty("user.dir").
                     concat(File.separator).concat("arff-files-sorted").
                     concat(File.separator).concat(fileName).concat("_").
                     concat(method).concat(".arff");
         
-        IO.save(file, savePath);
+        IO.save(file, saveArffPath);
         
     }
     

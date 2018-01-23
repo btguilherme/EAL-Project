@@ -5,7 +5,6 @@
  */
 package eal.supervised;
 
-import java.io.IOException;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
 
@@ -15,8 +14,10 @@ import weka.core.Instances;
  */
 public class RF extends Supervised{
     
-    public RF(Instances z2i, Instances z3) throws Exception {
-        super(z2i, z3);
+    public RF(Instances z2i, Instances z3, String savePath, 
+            boolean firstIteration) throws Exception {
+        
+        super(z2i, z3, savePath, firstIteration);
     }
 
     @Override

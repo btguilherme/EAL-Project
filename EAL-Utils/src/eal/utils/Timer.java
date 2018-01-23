@@ -91,11 +91,13 @@ public class Timer
 //                double c = Math.sqrt( b );
 //            }
 
-            Thread.sleep(5*1000);
+            Thread.sleep(1*1000);
             
             //min:seg.milliseg
             //0:01.000
 
-            System.out.println( timer );
+            String out = timer.toString();
+            
+            System.out.println( out );
 	}
 }

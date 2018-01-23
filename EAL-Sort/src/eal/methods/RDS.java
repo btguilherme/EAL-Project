@@ -7,11 +7,13 @@ package eal.methods;
 
 import eal.utils.IO;
 import eal.utils.MapUtil;
+import eal.utils.Timer;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import weka.core.EuclideanDistance;
@@ -26,15 +28,26 @@ public class RDS extends AFC{
     protected Instances raizes;
     protected Instances[] listas;
     
-    public RDS(Instances file, int nClusters, String fileName, String method) throws Exception{
-        super(file, nClusters, fileName, method);
+    public RDS(Instances file, int nClusters, String fileName, String method, 
+            String savePath) throws Exception{
+        
+        super(file, nClusters, fileName, method, savePath);
     }
 
     @Override
     public void makeItHappen() throws Exception {
+        
+        Timer timer = new Timer();
+        
         cluster();
         raizes = clusterer.getClusterCentroids();
         sort(file);
+        
+        String sortTime = timer.toString();
+        String uuid = String.valueOf(UUID.randomUUID());
+        IO.saveConcat("#" + uuid, savePath + "_sort_time_" + method + ".txt");
+        IO.saveConcat(sortTime, savePath + "_sort_time_" + method + ".txt");
+        
         save();
     }
 
@@ -90,16 +103,16 @@ public class RDS extends AFC{
     @Override
     protected void save() throws IOException {
         
-        String savePath;
+        String saveArffPath;
         
         for (int i = 0; i < listas.length; i++) {
         
-            savePath = System.getProperty("user.dir").concat(File.separator).
+            saveArffPath = System.getProperty("user.dir").concat(File.separator).
                     concat("arff-files-sorted").concat(File.separator).
                     concat(fileName).concat("_").concat(method).
                     concat("_lista_").concat(String.valueOf(i)).concat(".arff");
             
-            IO.save(listas[i], savePath);   
+            IO.save(listas[i], saveArffPath);   
         }
     }
     

@@ -8,6 +8,7 @@ package eal.methods;
 import eal.utils.IO;
 import eal.utils.InstancesManipulation;
 import eal.utils.MapUtil;
+import eal.utils.Timer;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import weka.clusterers.SimpleKMeans;
@@ -38,13 +40,17 @@ public class AFC {
     protected Instances sorted;
     protected String fileName;
     protected String method;
+    protected final String savePath;
     
-    public AFC(Instances file, int nClusters, String fileName, String method) throws Exception{
+    public AFC(Instances file, int nClusters, String fileName, String method, 
+            String savePath) throws Exception{
+        
         this.distances = new ArrayList<>();
         this.file = file;
         this.nClusters = nClusters;
         this.fileName = fileName;
         this.method = method;
+        this.savePath = savePath;
         
         this.fileWithoutClass = InstancesManipulation.
                 removeAtributoClasse(this.file);
@@ -53,30 +59,35 @@ public class AFC {
     }
     
     public void makeItHappen() throws Exception {
+
+        Timer timer = new Timer();
         
         int kVizinhos = file.numClasses()/2;
-        
         cluster();
-            
         Instances raizes = roots(clusterer.getClusterCentroids());
-
         removeRootsFromFiles(raizes);
 
         Instances amostrasDeFronteira = neighbors(clusterer, kVizinhos);
         Instances amostrasDeFronteiraOrdenada = sort(amostrasDeFronteira);
         sorted = rootsPlusSorted(amostrasDeFronteiraOrdenada);
         
+        String sortTime = timer.toString();
+        
+        String uuid = String.valueOf(UUID.randomUUID());
+        IO.saveConcat("#" + uuid, savePath + "_sort_time_" + method + ".txt");
+        IO.saveConcat(sortTime, savePath + "_sort_time_" + method + ".txt");
+        
         save();
     }
 
     protected void save() throws IOException {
         
-        String savePath = System.getProperty("user.dir").
+        String saveArffPath = System.getProperty("user.dir").
                     concat(File.separator).concat("arff-files-sorted").
                     concat(File.separator).concat(fileName).concat("_").
                     concat(method).concat(".arff");
         
-        IO.save(sorted, savePath);
+        IO.save(sorted, saveArffPath);
         
     }
 

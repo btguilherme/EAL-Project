@@ -5,7 +5,6 @@
  */
 package eal.supervised;
 
-import java.io.IOException;
 import weka.classifiers.functions.SMO;
 import weka.core.Instances;
 
@@ -15,8 +14,10 @@ import weka.core.Instances;
  */
 public class SVM extends Supervised{
 
-    public SVM(Instances z2i, Instances z3) throws Exception {
-        super(z2i, z3);
+    public SVM(Instances z2i, Instances z3, String savePath, 
+            boolean firstIteration) throws Exception {
+        
+        super(z2i, z3, savePath, firstIteration);
     }
     
     @Override

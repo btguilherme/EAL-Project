@@ -8,11 +8,11 @@ package eal.methods;
 import eal.utils.IO;
 import eal.utils.InstancesManipulation;
 import eal.utils.MapUtil;
-import java.io.File;
-import java.io.IOException;
+import eal.utils.Timer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import weka.core.EuclideanDistance;
@@ -24,20 +24,25 @@ import weka.core.Instances;
  */
 public class RDBS extends RDS{
 
-    public RDBS(Instances file, int nClusters, String fileName, String method) throws Exception{
-        super(file, nClusters, fileName, method);
+    public RDBS(Instances file, int nClusters, String fileName, String method, String savePath) throws Exception{
+        super(file, nClusters, fileName, method, savePath);
     }
 
     @Override
     public void makeItHappen() throws Exception {
         
+        Timer timer = new Timer();
+        
         int kVizinhos = file.numClasses()/2;
         cluster();
         raizes = clusterer.getClusterCentroids();
-        
         Instances amostrasDeFronteira = neighbors(clusterer, kVizinhos);
-
         sort(amostrasDeFronteira);
+        
+        String sortTime = timer.toString();
+        String uuid = String.valueOf(UUID.randomUUID());
+        IO.saveConcat("#" + uuid, savePath + "_sort_time_" + method + ".txt");
+        IO.saveConcat(sortTime, savePath + "_sort_time_" + method + ".txt");
         
         save();
     }
