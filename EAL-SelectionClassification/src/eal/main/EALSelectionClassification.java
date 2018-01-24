@@ -5,17 +5,9 @@
  */
 package eal.main;
 
-import eal.selection.MultipleLists;
-import eal.selection.UniqueList;
-import eal.supervised.OPF;
-import eal.supervised.RF;
-import eal.supervised.SVM;
-import eal.unsupervised.CollectiveWrapperOPF;
-import eal.unsupervised.CollectiveWrapperRF;
-import eal.unsupervised.CollectiveWrapperSVM;
-import eal.unsupervised.YATSIOPF;
-import eal.unsupervised.YATSIRF;
-import eal.unsupervised.YATSISVM;
+import eal.selection.*;
+import eal.supervised.*;
+import eal.unsupervised.*;
 import eal.utils.IO;
 import eal.utils.ReadProperties;
 import java.io.File;
@@ -42,8 +34,6 @@ public class EALSelectionClassification {
     private static String basesSavePath;
     private static Classifier classificador;
     private static String savePath;
-    private static double acc;
-    
 
     /**
      * @param args the command line arguments
@@ -264,56 +254,43 @@ public class EALSelectionClassification {
                 case "SVM":
                     SVM svm = new SVM(z2i, z3, savePath, firstIteration);
                     classificador = svm.getClassifier();
-                    acc = svm.getAcc();
                     break;
                 case "RF":
                     RF rf = new RF(z2i, z3, savePath, firstIteration);
                     classificador = rf.getClassifier();
-                    acc = rf.getAcc();
                     break;
                 case "OPF":
                     OPF opf = new OPF(z2i, z3, savePath, firstIteration);
                     classificador = opf.getClassifier();
-                    acc = opf.getAcc();
                     break;
                 //semisupervised
                 case "YSVM":
                     YATSISVM ysvm = new YATSISVM(z2i, z2ii, z3, savePath, firstIteration);
                     classificador = ysvm.getClassifier();
-                    acc = ysvm.getAcc();
                     break;
                 case "YRF":
                     YATSIRF yrf = new YATSIRF(z2i, z2ii, z3, savePath, firstIteration);
                     classificador = yrf.getClassifier();
-                    acc = yrf.getAcc();
                     break;
                 case "YOPF":
                     YATSIOPF yopf = new YATSIOPF(z2i, z2ii, z3, savePath, firstIteration);
                     classificador = yopf.getClassifier();
-                    acc = yopf.getAcc();
                     break;
                 case "WSVM":
                     CollectiveWrapperSVM wsvm = new CollectiveWrapperSVM(z2i, z2ii, z3, savePath, firstIteration);
                     classificador = wsvm.getClassifier();
-                    acc = wsvm.getAcc();
                     break;
                 case "WRF":
                     CollectiveWrapperRF wrf = new CollectiveWrapperRF(z2i, z2ii, z3, savePath, firstIteration);
                     classificador = wrf.getClassifier();
-                    acc = wrf.getAcc();
                     break;
                 case "WOPF":
                     CollectiveWrapperOPF wopf = new CollectiveWrapperOPF(z2i, z2ii, z3, savePath, firstIteration);
                     classificador = wopf.getClassifier();
-                    acc = wopf.getAcc();
                     break;
             }
             
             System.err.println("Fim");
-            
-            IO.saveConcat(String.valueOf(acc), savePath + "_acc_" + classifier 
-                    + ".txt");
-            
         }
     }
 

@@ -43,7 +43,7 @@ public class RDS extends AFC{
         raizes = clusterer.getClusterCentroids();
         sort(file);
         
-        String sortTime = timer.toString();
+        String sortTime = String.valueOf(timer.getTime());
         String uuid = String.valueOf(UUID.randomUUID());
         IO.saveConcat("#" + uuid, savePath + "_sort_time_" + method + ".txt");
         IO.saveConcat(sortTime, savePath + "_sort_time_" + method + ".txt");

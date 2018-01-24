@@ -71,7 +71,7 @@ public class AFC {
         Instances amostrasDeFronteiraOrdenada = sort(amostrasDeFronteira);
         sorted = rootsPlusSorted(amostrasDeFronteiraOrdenada);
         
-        String sortTime = timer.toString();
+        String sortTime = String.valueOf(timer.getTime());
         
         String uuid = String.valueOf(UUID.randomUUID());
         IO.saveConcat("#" + uuid, savePath + "_sort_time_" + method + ".txt");

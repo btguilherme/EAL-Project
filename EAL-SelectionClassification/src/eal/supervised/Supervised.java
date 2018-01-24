@@ -40,19 +40,19 @@ public class Supervised implements ISupervised{
     public void makeItHappen() throws Exception{
         Timer timer = new Timer();
         train();
-        String trainTime = timer.toString();
+        String trainTime = String.valueOf(timer.getTime());
         
         timer = new Timer();
         classify();
-        String testTime = timer.toString();
+        String testTime = String.valueOf(timer.getTime());
         
         String classifierType = getClass().getSimpleName();
         
         if(firstIteration){
             String uuid = String.valueOf(UUID.randomUUID());
-            IO.saveConcat("#" + uuid, savePath + "_acc_" + classifierType + ".txt");
-            IO.saveConcat("#" + uuid, savePath + "_train_" + classifierType + ".txt");
-            IO.saveConcat("#" + uuid, savePath + "_test_" + classifierType + ".txt");
+            IO.save("#" + uuid, savePath + "_acc_" + classifierType + ".txt");
+            IO.save("#" + uuid, savePath + "_train_" + classifierType + ".txt");
+            IO.save("#" + uuid, savePath + "_test_" + classifierType + ".txt");
         }
         
         IO.saveConcat(String.valueOf(acc), savePath + "_acc_" + classifierType + ".txt");

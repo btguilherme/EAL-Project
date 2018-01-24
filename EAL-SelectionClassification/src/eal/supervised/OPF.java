@@ -5,7 +5,6 @@
  */
 package eal.supervised;
 
-import java.io.IOException;
 import weka.core.Instances;
 
 /**

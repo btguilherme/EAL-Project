@@ -8,8 +8,12 @@ package eal.utils;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils;
 
@@ -25,6 +29,19 @@ public class IO {
         Instances data = source.getDataSet();
         
         return data;
+    }
+    
+    public static List<String> openTxt(String path) throws FileNotFoundException {
+        List<String> ret = new ArrayList<>();
+        File file = new File(path);
+        
+        try (Scanner arq = new Scanner(file)) {
+            while (arq.hasNextLine()) {
+                ret.add(arq.nextLine());
+            }
+        }
+
+        return ret;
     }
     
     public static void save(Instances data, String path) throws IOException{
