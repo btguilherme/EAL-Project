@@ -25,6 +25,10 @@ public class Unsupervised implements IUnsupervised{
     protected double acc;
     protected final boolean firstIteration;
     protected final String savePath;
+    protected double precision;
+    protected double recall;
+    protected double fmeasure;
+    protected double roc;
     
     public Unsupervised(Instances z2i, Instances z2ii, Instances z3, 
             String savePath, boolean firstIteration) throws Exception{
@@ -55,11 +59,19 @@ public class Unsupervised implements IUnsupervised{
             IO.save("#" + uuid, savePath + "_acc_" + classifierType + ".txt");
             IO.save("#" + uuid, savePath + "_train_" + classifierType + ".txt");
             IO.save("#" + uuid, savePath + "_test_" + classifierType + ".txt");
+            IO.save("#" + uuid, savePath + "_precision_" + classifierType + ".txt");
+            IO.save("#" + uuid, savePath + "_recall_" + classifierType + ".txt");
+            IO.save("#" + uuid, savePath + "_fmeasure_" + classifierType + ".txt");
+            IO.save("#" + uuid, savePath + "_roc_" + classifierType + ".txt");
         }
         
         IO.saveConcat(String.valueOf(acc), savePath + "_acc_" + classifierType + ".txt");
         IO.saveConcat(trainTime, savePath + "_train_" + classifierType + ".txt");
         IO.saveConcat(testTime, savePath + "_test_" + classifierType + ".txt");
+        IO.saveConcat(String.valueOf(precision), savePath + "_precision_" + classifierType + ".txt");
+        IO.saveConcat(String.valueOf(recall), savePath + "_recall_" + classifierType + ".txt");
+        IO.saveConcat(String.valueOf(fmeasure), savePath + "_fmeasure_" + classifierType + ".txt");
+        IO.saveConcat(String.valueOf(roc), savePath + "_roc_" + classifierType + ".txt");
     }
 
     @Override
@@ -72,14 +84,18 @@ public class Unsupervised implements IUnsupervised{
         CollectiveEvaluation eval = new CollectiveEvaluation(z2i);
         eval.evaluateModel(classifier, z3);
         acc = eval.pctCorrect();
+        precision = eval.weightedPrecision();
+        recall = eval.weightedRecall();
+        fmeasure = eval.weightedFMeasure();
+        roc = eval.weightedAreaUnderROC();
+        
+        //With high precision but low recall, you classifier is extremely accurate, 
+        //but it misses a significant number of instances that are difficult to classify. This is not very useful.
     }
     
     public Classifier getClassifier() {
         return classifier;
     }
 
-    public double getAcc() {
-        return acc;
-    }    
     
 }

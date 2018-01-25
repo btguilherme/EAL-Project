@@ -34,7 +34,7 @@ public class EALInformation {
         String[] sortMethods = {"AFC", "Clu", "RDBS", "RDS", "Rand"};
         String[] classifiers = {"_SVM", "_RF", "_OPF", "_YATSISVM", "_YATSIRF", 
             "_YATSIOPF", "_CollectiveWrapperSVM", "_CollectiveWrapperRF", "_CollectiveWrapperOPF"};
-        String[] mensurations = {"acc", "train", "test"};
+        String[] mensurations = {"acc", "train", "test", "precision", "recall", "fmeasure", "roc"};
         
         
         for (String mensuration : mensurations) {
@@ -47,9 +47,9 @@ public class EALInformation {
                             f.add(txtFile);
                         }
                     }
-                    
+                    System.err.print("Calculando para "+mensuration +""+ classifier +"_"+ sortMethod+" ... ");
                     calc(f, txtFilesPath);
-                    
+                    System.err.println("Fim");
                 }
             }
         }
@@ -116,7 +116,7 @@ public class EALInformation {
 
         }
 
-        String path = txtFilesPath + f.get(0).getName().split("split_")[0] + 
+        String path = txtFilesPath.replace("txt", "dat") + f.get(0).getName().split("split_")[0] + 
                 secPart.replace(".txt", ".dat");
         
         IO.save(dat, path);
